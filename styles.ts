@@ -31,6 +31,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  linkText: {
+    color: '#004AAD', 
+    textDecorationLine: 'underline',
+  },
+  text: {
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  
 });
 
 export default styles;

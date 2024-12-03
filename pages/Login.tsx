@@ -1,4 +1,3 @@
-// Login.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import useUserFetch from '../hooks/UseuserFetch';
@@ -46,6 +45,20 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
       <TouchableOpacity style={styles.startButton} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
+
+      {/* Add this section for the register link */}
+      <View style={{ marginTop: 20 }}>
+        <Text style={styles.text}>
+          Not registered?{' '}
+          <Text 
+            style={styles.linkText} 
+            onPress={() => navigation.navigate('Register')}
+          >
+            Click here
+          </Text>
+          {' '}to create an account.
+        </Text>
+      </View>
     </View>
   );
 };
