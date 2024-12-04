@@ -12,7 +12,7 @@ interface FormData {
   time: string;
   cookingTime: string;
   servings: string;
-  user: string;
+ 
 }
 
 const Form: React.FC = () => {
@@ -30,7 +30,7 @@ const Form: React.FC = () => {
     time: recipe?.time || '',
     cookingTime: recipe?.cookingTime || '',
     servings: recipe?.servings || '',
-    user: recipe?.user || '',
+  
   });
 
   const handleInputChange = (field: keyof FormData, value: string) => {

@@ -8,18 +8,17 @@ const useUserFetch = () => {
 
   const getFetch = async (url: string, options: RequestInit) => {
     try {
-      // Retrieve the token from AsyncStorage
+    
       const token = await AsyncStorage.getItem('userToken');
 
-      // Add token to headers if it exists
       const headers = {
         'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }) // Include token if present
+        ...(token && { Authorization: `Bearer ${token}` })
       };
 
       const response = await fetch(url, {
         ...options,
-        headers: { ...headers, ...options.headers }, // Merge headers
+        headers: { ...headers, ...options.headers }, 
       });
 
       const data: UserResponse = await response.json();

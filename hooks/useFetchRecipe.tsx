@@ -5,29 +5,35 @@ const useFetch = (baseURL: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Get the token from localStorage (assuming you store it there)
-  const token = localStorage.getItem('token'); 
-
   const request = async (endpoint: string, method: string, body?: any) => {
     setLoading(true);
     setError(null);
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.warn('No token found in localStorage');
+    }
 
     try {
       const response = await fetch(`${baseURL}${endpoint}`, {
         method,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: token ? `Bearer ${token}` : '',  // Add token here
+          Authorization: token ? `Bearer ${token}` : '', 
         },
         body: body ? JSON.stringify(body) : undefined,
       });
 
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || 'Error occurred');
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.message || 'An error occurred');
+      }
 
+      const result = await response.json();
       setData(result);
       return result;
     } catch (err: any) {
+      console.error('Request error:', err.message); 
       setError(err.message);
     } finally {
       setLoading(false);

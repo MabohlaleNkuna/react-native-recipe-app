@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import useUserFetch from '../hooks/UseuserFetch';
 import styles from '../styles';
-import AsyncStorage from '@react-native-async-storage/async-storage';  // import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 interface LoginProps {
   navigation: {
@@ -21,12 +21,11 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
       const response = await login(email, password);
 
       if (response?.status) {
-        // Store the token in AsyncStorage
-        const token = response.data.token;  // Assuming the token is in response.data.token
+        const token = response.data.token;  
         await AsyncStorage.setItem('userToken', token);
 
         Alert.alert('Success', 'Logged in successfully');
-        navigation.navigate('Home'); // Navigate to Home after successful login
+        navigation.navigate('Home'); 
       } else {
         Alert.alert('Error', error || 'Login failed. Please try again.');
       }

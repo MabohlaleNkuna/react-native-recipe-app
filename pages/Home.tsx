@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,19 +7,16 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../App'; 
+import { useFocusEffect } from '@react-navigation/native';
 import useFetch from '../hooks/useFetchRecipe';
 
 const Home: React.FC = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Home'>>();
-  const { get, del } = useFetch('http://localhost:5000/recipes');
+  const { get, del, loading, error } = useFetch('http://localhost:5000/recipes');
   const [recipes, setRecipes] = useState<any[]>([]);
 
   const fetchRecipes = async () => {
     const response = await get('/');
-    if (response) setRecipes(response.recipes);
+    if (response?.recipes) setRecipes(response.recipes);
   };
 
   useFocusEffect(
@@ -32,6 +29,9 @@ const Home: React.FC = () => {
     await del(`/${id}`);
     fetchRecipes();
   };
+
+  if (loading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error: {error}</Text>;
 
   return (
     <View style={styles.container}>
@@ -52,15 +52,11 @@ const Home: React.FC = () => {
               </TouchableOpacity>
               <Button
                 title="Edit"
-                onPress={() => navigation.navigate('Form', { recipe: item })}
+                onPress={() => console.log('Edit recipe')} // Placeholder
               />
             </View>
           </View>
         )}
-      />
-      <Button
-        title="Add Recipe"
-        onPress={() => navigation.navigate('Form', { recipe: undefined })}
       />
     </View>
   );
@@ -68,26 +64,13 @@ const Home: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
-  welcome: { fontSize: 24, marginBottom: 16 },
-  recipeCard: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  title: { fontSize: 18, fontWeight: 'bold' },
-  subtitle: { fontSize: 14, color: '#666', marginBottom: 8 },
-  description: { fontSize: 14, color: '#333', marginBottom: 8 },
-  cardActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  delete: { color: 'red', fontWeight: 'bold' },
+  welcome: { fontSize: 18, fontWeight: 'bold', marginBottom: 16 },
+  recipeCard: { padding: 16, backgroundColor: '#f9f9f9', marginBottom: 8 },
+  title: { fontSize: 16, fontWeight: 'bold' },
+  subtitle: { fontSize: 14, color: '#888' },
+  description: { fontSize: 12 },
+  cardActions: { flexDirection: 'row', justifyContent: 'space-between' },
+  delete: { color: 'red' },
 });
 
 export default Home;
