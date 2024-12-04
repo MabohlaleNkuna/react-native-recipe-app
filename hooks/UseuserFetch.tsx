@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';  // import AsyncStorage
 
 type UserResponse = any;
 
@@ -7,7 +8,20 @@ const useUserFetch = () => {
 
   const getFetch = async (url: string, options: RequestInit) => {
     try {
-      const response = await fetch(url, options);
+      // Retrieve the token from AsyncStorage
+      const token = await AsyncStorage.getItem('userToken');
+
+      // Add token to headers if it exists
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }) // Include token if present
+      };
+
+      const response = await fetch(url, {
+        ...options,
+        headers: { ...headers, ...options.headers }, // Merge headers
+      });
+
       const data: UserResponse = await response.json();
 
       if (!response.ok) {
@@ -24,7 +38,6 @@ const useUserFetch = () => {
   const register = async (userData: { username: string; email: string; password: string }) => {
     return getFetch('http://localhost:5000/api/users/register', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
     });
   };
@@ -32,7 +45,6 @@ const useUserFetch = () => {
   const login = async (email: string, password: string) => {
     return getFetch('http://localhost:5000/api/users/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
   };
