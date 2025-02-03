@@ -1,30 +1,27 @@
 import React, { useState } from 'react';  
-import { View, Text, TextInput, ScrollView, StyleSheet, Alert, FlatList, Dimensions } from 'react-native';
-import { Button, ActivityIndicator } from 'react-native-paper';
-import { useRoute, useNavigation } from '@react-navigation/native';
-
-const { width } = Dimensions.get('window');
+import { View, Text, TextInput, ScrollView, StyleSheet, Alert, FlatList, ActivityIndicator } from 'react-native';
+import CustomButton from './CustomButton';
 
 const Form = () => {
-  const route = useRoute();
-  const navigation = useNavigation();
-  const { recipe } = route.params || {};
-
-  const categories = ['Breakfast', 'Lunch', 'Dinner'];
-
   const [formData, setFormData] = useState({
-    title: recipe?.title || '',
-    ingredients: recipe?.ingredients || '',
-    instructions: recipe?.instructions || '',
-    category: recipe?.category || '',
-    preparation: recipe?.preparation || '',
-    time: recipe?.time || '',
-    cookingTime: recipe?.cookingTime || '',
-    servings: recipe?.servings || '',
+    title: '',
+    ingredients: '',
+    instructions: '',
+    category: '',
+    preparation: '',
+    time: '',
+    cookingTime: '',
+    servings: '',
   });
 
   const [loading, setLoading] = useState(false);
-  const [showCategories, setShowCategories] = useState(false); // State to toggle category visibility
+  const [showCategories, setShowCategories] = useState(false);
+
+  const categories = ['Breakfast', 'Lunch', 'Dinner'];
+
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+  };
 
   const validateForm = () => {
     for (let key in formData) {
@@ -36,36 +33,10 @@ const Form = () => {
     return true;
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData({ ...formData, [field]: value });
-  };
-
   const handleSubmit = async () => {
     if (!validateForm()) return;
     setLoading(true);
-    const url = recipe
-      ? `https://mongodb-recipe-app.onrender.com/recipes/${recipe._id}`
-      : 'https://mongodb-recipe-app.onrender.com/recipes';
-    const method = recipe ? 'PUT' : 'POST';
-
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.json();
-      if (response.ok) {
-        Alert.alert('Success', recipe ? 'Recipe updated!' : 'Recipe added!');
-        navigation.navigate('Home', { refresh: true });
-      } else {
-        throw new Error(result.message || 'Something went wrong');
-      }
-    } catch (err) {
-      Alert.alert('Error', err.message);
-    } finally {
-      setLoading(false);
-    }
+    setLoading(false);
   };
 
   return (
@@ -75,20 +46,14 @@ const Form = () => {
       <TextInput style={styles.input} placeholder="Instructions" value={formData.instructions} onChangeText={(value) => handleInputChange('instructions', value)} />
       
       <Text style={styles.label}>Category</Text>
-      <Button onPress={() => setShowCategories(!showCategories)} color="#004AAD">
-        {formData.category || 'Select Category'}
-      </Button>
+      <CustomButton title={formData.category || 'Select Category'} onPress={() => setShowCategories(!showCategories)} />
       
       {showCategories && (
         <FlatList
           data={categories}
           keyExtractor={(item) => item}
           renderItem={({ item }) => (
-            <View style={styles.radioItem}>
-              <Button mode="outlined" onPress={() => { handleInputChange('category', item); setShowCategories(false); }} color="004AAD">
-                {item}
-              </Button>
-            </View>
+            <CustomButton title={item} onPress={() => { handleInputChange('category', item); setShowCategories(false); }} />
           )}
         />
       )}
@@ -101,9 +66,7 @@ const Form = () => {
       {loading ? (
         <ActivityIndicator animating={true} color="#004AAD" />
       ) : (
-        <Button mode="contained" onPress={handleSubmit} color="#004AAD">
-          {recipe ? 'Update' : 'Create'} Recipe
-        </Button>
+        <CustomButton title="Create Recipe" onPress={handleSubmit} />
       )}
     </ScrollView>
   );
@@ -124,10 +87,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 4,
-  },
-  radioItem: {
-    marginBottom: 10,
-    width: '100%',
   },
 });
 

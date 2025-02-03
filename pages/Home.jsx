@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Button, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react'; 
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import CustomButton from '../components/CustomButton'; 
 
 const Home = () => {
   const navigation = useNavigation();
@@ -48,8 +49,7 @@ const Home = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.welcome}>Welcome to the Recipe Manager!</Text>
-      <Button title="Add New Recipe" onPress={handleAddRecipe} color="#004AAD" />
-      
+      <CustomButton title="Add New Recipe" onPress={handleAddRecipe} style={styles.addButton} />
       {recipes.length > 0 ? (
         <FlatList
           data={recipes}
@@ -69,7 +69,11 @@ const Home = () => {
                 <TouchableOpacity onPress={() => deleteRecipe(item._id)}>
                   <Text style={styles.delete}>Delete</Text>
                 </TouchableOpacity>
-                <Button title="Edit" onPress={() => navigation.navigate('Form', { recipe: item })} color="#004AAD" />
+                <CustomButton 
+                  title="Edit" 
+                  onPress={() => navigation.navigate('Form', { recipe: item })} 
+                  style={styles.editButton} 
+                />
               </View>
             </View>
           )}
@@ -91,6 +95,8 @@ const styles = StyleSheet.create({
   info: { fontSize: 12, color: '#333', marginBottom: 2 },
   cardActions: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 },
   delete: { color: 'red', fontWeight: 'bold' },
+  addButton: { marginBottom: 20 },
+  editButton: { marginLeft: 10 },
 });
 
 export default Home;
