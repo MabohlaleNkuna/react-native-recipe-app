@@ -19,10 +19,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.mabohlale.reactnativerecipeapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "aca60408-095b-4781-a676-578332b208bc"
+      }
     }
   }
 }
