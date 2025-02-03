@@ -11,5 +11,5 @@
   "include": [
     "**/*.ts",
     "**/*.tsx"
-, "components/Button.tsx"  ]
+, "components/Button.tsx", "pages/Home.jsx", "components/Form.jsx"  ]
 }
