@@ -89,6 +89,7 @@ npx expo start
 
 ## url to download android apk:
 
+https://expo.dev/artifacts/eas/rf4ML5UMSRCr2Hu5BcY75a.apk
 
 
 
