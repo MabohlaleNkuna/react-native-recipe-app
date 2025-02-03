@@ -1,8 +1,8 @@
-import React, { useState } from 'react';  
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, StyleSheet, Alert, FlatList, ActivityIndicator } from 'react-native';
 import CustomButton from './CustomButton';
 
-const Form = () => {
+const Form = ({ route, navigation }) => {
   const [formData, setFormData] = useState({
     title: '',
     ingredients: '',
@@ -16,8 +16,16 @@ const Form = () => {
 
   const [loading, setLoading] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const categories = ['Breakfast', 'Lunch', 'Dinner'];
+
+  useEffect(() => {
+    if (route.params?.recipe) {
+      setFormData(route.params.recipe);
+      setIsEditing(true);
+    }
+  }, [route.params?.recipe]);
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
@@ -25,7 +33,7 @@ const Form = () => {
 
   const validateForm = () => {
     for (let key in formData) {
-      if (!formData[key].trim()) {
+      if (typeof formData[key] === 'string' && !formData[key].trim()) {
         Alert.alert('Validation Error', 'All fields are required');
         return false;
       }
@@ -36,7 +44,33 @@ const Form = () => {
   const handleSubmit = async () => {
     if (!validateForm()) return;
     setLoading(true);
-    setLoading(false);
+
+    try {
+      const url = isEditing
+        ? `https://mongodb-recipe-app.onrender.com/recipes/${formData._id}`
+        : 'https://mongodb-recipe-app.onrender.com/recipes';
+
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error submitting form');
+      }
+
+      Alert.alert(isEditing ? 'Success' : 'Created', isEditing ? 'Recipe updated successfully' : 'Recipe created successfully');
+      navigation.goBack();  // Navigate back to Home page after submission
+    } catch (err) {
+      Alert.alert('Error', err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -66,7 +100,7 @@ const Form = () => {
       {loading ? (
         <ActivityIndicator animating={true} color="#004AAD" />
       ) : (
-        <CustomButton title="Create Recipe" onPress={handleSubmit} />
+        <CustomButton title={isEditing ? 'Update Recipe' : 'Create Recipe'} onPress={handleSubmit} />
       )}
     </ScrollView>
   );
